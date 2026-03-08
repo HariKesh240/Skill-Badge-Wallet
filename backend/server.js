@@ -3,12 +3,30 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
 
 require("dotenv").config();
 
 const app = express();
 app.use(express.json());
 app.use(cors());
+
+// Ensure uploads folder exists
+if (!fs.existsSync("uploads")) {
+  fs.mkdirSync("uploads");
+}
+
+// Serve uploaded images statically
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+// Multer Storage Configuration
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, "uploads/"),
+  filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
+});
+const upload = multer({ storage });
 
 // DB Connection
 mongoose.connect(process.env.MONGO_URI)
@@ -26,7 +44,8 @@ const BadgeSchema = new mongoose.Schema({
   title: String,
   skill: String,
   organization: String,
-  date: String
+  date: String,
+  imageUrl: String // Added Image URL
 });
 
 const User = mongoose.model("User", UserSchema);
@@ -60,11 +79,14 @@ app.post("/login", async (req, res) => {
   if (!isMatch) return res.status(400).json({ msg: "Wrong password" });
 
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-  res.json({ token });
+  // Also return the userId so the frontend can generate a share link
+  res.json({ token, userId: user._id }); 
 });
 
-app.post("/badge", auth, async (req, res) => {
-  await Badge.create({ ...req.body, userId: req.userId });
+// Upload badge with image
+app.post("/badge", auth, upload.single("image"), async (req, res) => {
+  const imageUrl = req.file ? `/uploads/${req.file.filename}` : "";
+  await Badge.create({ ...req.body, userId: req.userId, imageUrl });
   res.json({ msg: "Badge added" });
 });
 
@@ -76,6 +98,16 @@ app.get("/badge", auth, async (req, res) => {
 app.delete("/badge/:id", auth, async (req, res) => {
   await Badge.findByIdAndDelete(req.params.id);
   res.json({ msg: "Deleted" });
+});
+
+// NEW PUBLIC ROUTE: Get badges for shared view
+app.get("/shared/:userId", async (req, res) => {
+  try {
+    const badges = await Badge.find({ userId: req.params.userId });
+    res.json(badges);
+  } catch (err) {
+    res.status(500).json({ msg: "Error fetching shared badges" });
+  }
 });
 
 app.listen(5000, () => console.log("Server running on 5000"));

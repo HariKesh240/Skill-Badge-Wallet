@@ -9,13 +9,14 @@ function Login() {
   const navigate = useNavigate();
 
   const submit = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await API.post("/login", { email, password });
-      localStorage.setItem("token", res.data.token);
-      navigate("/dashboard");
-    } catch (err) { alert("Invalid Credentials"); }
-  };
+  e.preventDefault();
+  try {
+    const res = await API.post("/login", { email, password });
+    localStorage.setItem("token", res.data.token);
+    localStorage.setItem("userId", res.data.userId); // NEW LINE
+    navigate("/dashboard");
+  } catch (err) { alert("Invalid Credentials"); }
+};
 
   return (
     <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: "100vh" }}>

@@ -6,11 +6,21 @@ import { useNavigate } from "react-router-dom";
 
 function AddBadge() {
   const [data, setData] = useState({});
+  const [image, setImage] = useState(null); // New state for Image
   const navigate = useNavigate();
 
   const submit = async (e) => {
     e.preventDefault();
-    await API.post("/badge", data);
+    
+    // We must use FormData when uploading files
+    const formData = new FormData();
+    formData.append("title", data.title);
+    formData.append("skill", data.skill);
+    formData.append("organization", data.organization);
+    formData.append("date", data.date);
+    if (image) formData.append("image", image);
+
+    await API.post("/badge", formData);
     navigate("/dashboard");
   };
 
@@ -43,11 +53,19 @@ function AddBadge() {
                     onChange={(e) => setData({ ...data, organization: e.target.value })} required />
                 </Form.Group>
               </Col>
-              <Col md={12}>
+              <Col md={6}>
                 <Form.Group className="mb-4">
                   <Form.Label className="small fw-bold">Issue Date</Form.Label>
                   <Form.Control type="date"
                     onChange={(e) => setData({ ...data, date: e.target.value })} required />
+                </Form.Group>
+              </Col>
+              {/* NEW FILE INPUT */}
+              <Col md={6}>
+                <Form.Group className="mb-4">
+                  <Form.Label className="small fw-bold">Upload Certificate</Form.Label>
+                  <Form.Control type="file" accept="image/*"
+                    onChange={(e) => setImage(e.target.files[0])} />
                 </Form.Group>
               </Col>
             </Row>

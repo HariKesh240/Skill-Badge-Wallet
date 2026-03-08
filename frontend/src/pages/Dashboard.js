@@ -4,7 +4,7 @@ import API from "../utils/api";
 import NavbarComp from "../components/NavbarComp";
 
 function Dashboard() {
-  const [badges, setBadges] = useState([]);
+  const[badges, setBadges] = useState([]);
 
   const loadBadges = async () => {
     try {
@@ -20,7 +20,15 @@ function Dashboard() {
     }
   };
 
-  useEffect(() => { loadBadges(); }, []);
+  // Share functionality
+  const shareWallet = () => {
+    const userId = localStorage.getItem("userId");
+    const shareUrl = `${window.location.origin}/shared/${userId}`;
+    navigator.clipboard.writeText(shareUrl);
+    alert("Shareable link copied to clipboard!");
+  };
+
+  useEffect(() => { loadBadges(); },[]);
 
   return (
     <>
@@ -28,7 +36,12 @@ function Dashboard() {
       <Container>
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h2 className="fw-bold">Your Skill Badges</h2>
-          <Badge bg="primary" pill>{badges.length} Total</Badge>
+          <div>
+            <Badge bg="primary" pill className="me-3">{badges.length} Total</Badge>
+            <Button variant="outline-success" onClick={shareWallet} size="sm">
+              <i className="bi bi-share me-2"></i>Share Wallet
+            </Button>
+          </div>
         </div>
 
         {badges.length === 0 ? (
@@ -40,6 +53,14 @@ function Dashboard() {
             {badges.map((b) => (
               <Col md={4} key={b._id} className="mb-4">
                 <Card className="h-100 shadow-sm border-0">
+                  {/* Display Image if it exists */}
+                  {b.imageUrl && (
+                    <Card.Img 
+                      variant="top" 
+                      src={`http://localhost:5000${b.imageUrl}`} 
+                      style={{ height: '200px', objectFit: 'cover' }} 
+                    />
+                  )}
                   <Card.Body className="d-flex flex-column">
                     <div className="text-end mb-2">
                       <Badge bg="info" className="text-dark">{b.skill}</Badge>
