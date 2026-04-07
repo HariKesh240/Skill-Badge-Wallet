@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Container, Card, Button, Row, Col, Badge } from "react-bootstrap";
-import API from "../utils/api";
-import NavbarComp from "../components/NavbarComp";
+import API, { getAssetUrl } from "../utils/api";
+import VaultLayout from "../components/VaultLayout";
 
 function Dashboard() {
   const[badges, setBadges] = useState([]);
@@ -31,52 +31,68 @@ function Dashboard() {
   useEffect(() => { loadBadges(); },[]);
 
   return (
-    <>
-      <NavbarComp />
-      <Container>
-        <div className="d-flex justify-content-between align-items-center mb-4">
-          <h2 className="fw-bold">Your Skill Badges</h2>
-          <div>
-            <Badge bg="primary" pill className="me-3">{badges.length} Total</Badge>
-            <Button variant="outline-success" onClick={shareWallet} size="sm">
-              <i className="bi bi-share me-2"></i>Share Wallet
-            </Button>
+    <VaultLayout
+      activeKey="vault"
+      title="My Vault"
+      subtitle={`Managing ${badges.length} Verified Professional Credentials`}
+      actions={
+        <div className="vault-toolbar">
+          <div className="vault-filter-pills">
+            <button type="button" className="is-active">All Badges</button>
           </div>
+          <Button variant="outline-dark" className="vault-share-button" onClick={shareWallet}>
+            Share Wallet
+          </Button>
         </div>
-
+      }
+    >
+      <Container fluid className="p-0">
         {badges.length === 0 ? (
-          <div className="text-center mt-5 p-5 bg-white rounded shadow-sm">
-            <h4 className="text-muted">No badges found. Start adding your skills!</h4>
+          <div className="vault-empty-state">
+            <h4>No badges found. Start adding your skills!</h4>
+            <p>Your saved certifications will appear here in your credential grid.</p>
           </div>
         ) : (
-          <Row>
+          <Row className="g-4">
             {badges.map((b) => (
-              <Col md={4} key={b._id} className="mb-4">
-                <Card className="h-100 shadow-sm border-0">
-                  {/* Display Image if it exists */}
-                  {b.imageUrl && (
-                    <Card.Img 
-                      variant="top" 
-                      src={`http://localhost:5000${b.imageUrl}`} 
-                      style={{ height: '200px', objectFit: 'cover' }} 
-                    />
-                  )}
-                  <Card.Body className="d-flex flex-column">
-                    <div className="text-end mb-2">
-                      <Badge bg="info" className="text-dark">{b.skill}</Badge>
+              <Col md={6} xl={4} key={b._id}>
+                <Card className="vault-badge-card h-100">
+                  <div className="vault-badge-card-top">
+                    {b.imageUrl ? (
+                      b.imageUrl.toLowerCase().endsWith(".pdf") ? (
+                        <iframe
+                          title={b.title}
+                          src={getAssetUrl(b.imageUrl)}
+                          className="vault-badge-media"
+                        />
+                      ) : (
+                        <Card.Img
+                          variant="top"
+                          src={getAssetUrl(b.imageUrl)}
+                          className="vault-badge-media"
+                        />
+                      )
+                    ) : (
+                      <div className="vault-badge-media vault-badge-media-placeholder">{b.skill?.slice(0, 1) || "B"}</div>
+                    )}
+                    <Badge className="vault-verified-badge">Verified</Badge>
+                  </div>
+                  <Card.Body className="vault-badge-body">
+                    <Card.Title>{b.title}</Card.Title>
+                    <Card.Text className="vault-badge-skill">{b.skill}</Card.Text>
+                    <div className="vault-badge-meta">
+                      <div>
+                        <span>Issuing Authority</span>
+                        <strong>{b.organization}</strong>
+                      </div>
+                      <div>
+                        <span>Date Earned</span>
+                        <strong>{b.date}</strong>
+                      </div>
                     </div>
-                    <Card.Title className="fw-bold text-dark">{b.title}</Card.Title>
-                    <Card.Subtitle className="mb-3 text-muted">
-                      Issued by: {b.organization}
-                    </Card.Subtitle>
-                    <Card.Text className="text-secondary small">
-                      <i className="bi bi-calendar-event me-2"></i>Date: {b.date}
-                    </Card.Text>
-                    <div className="mt-auto pt-3 border-top">
-                      <Button variant="link" className="text-danger p-0 text-decoration-none" onClick={() => remove(b._id)}>
-                        Remove Badge
-                      </Button>
-                    </div>
+                    <Button variant="link" className="vault-remove-link" onClick={() => remove(b._id)}>
+                      Remove Badge
+                    </Button>
                   </Card.Body>
                 </Card>
               </Col>
@@ -84,7 +100,7 @@ function Dashboard() {
           </Row>
         )}
       </Container>
-    </>
+    </VaultLayout>
   );
 }
 

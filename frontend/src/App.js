@@ -1,9 +1,11 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import "./App.css";
+import "./vault-theme.css";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import AddBadge from "./pages/AddBadge";
-import SharedWallet from "./components/SharedWallet"; 
+import SharedWalletView from "./components/SharedWalletView";
 
 function App() {
   return (
@@ -13,7 +15,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/add" element={<AddBadge />} />
-        <Route path="/shared/:userId" element={<SharedWallet />} />
+        <Route path="/shared/:userId" element={<SharedWalletView />} />
       </Routes>
     </BrowserRouter>
   );

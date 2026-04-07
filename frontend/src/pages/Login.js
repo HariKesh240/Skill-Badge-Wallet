@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Container, Form, Button, Card, FloatingLabel } from "react-bootstrap";
+import { Container, Form, Button } from "react-bootstrap";
 import API from "../utils/api";
 import { useNavigate, Link } from "react-router-dom";
 
@@ -9,42 +9,80 @@ function Login() {
   const navigate = useNavigate();
 
   const submit = async (e) => {
-  e.preventDefault();
-  try {
-    const res = await API.post("/login", { email, password });
-    localStorage.setItem("token", res.data.token);
-    localStorage.setItem("userId", res.data.userId); // NEW LINE
-    navigate("/dashboard");
-  } catch (err) { alert("Invalid Credentials"); }
-};
+    e.preventDefault();
+    try {
+      const res = await API.post("/login", { email, password });
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("userId", res.data.userId);
+      navigate("/dashboard");
+    } catch (err) {
+      alert("Invalid Credentials");
+    }
+  };
 
   return (
-    <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: "100vh" }}>
-      <Card className="p-4 shadow-lg border-0" style={{ maxWidth: "400px", width: "100%" }}>
-        <div className="text-center mb-4">
-          <h2 className="fw-bold text-primary">Welcome Back</h2>
-          <p className="text-muted">Sign in to manage your badges</p>
+    <div className="auth-shell">
+      <Container fluid className="auth-layout">
+        <div className="auth-hero">
+          <div className="auth-brand">The Academic Curator</div>
+          <div className="auth-hero-copy">
+            <h1>Your Legacy, Securely Archived.</h1>
+            <p>
+              Access your verified institutional achievements and professional
+              credentials in your high-density digital vault.
+            </p>
+          </div>
         </div>
 
-        <Form onSubmit={submit}>
-          <FloatingLabel label="Email address" className="mb-3">
-            <Form.Control type="email" placeholder="name@example.com" onChange={(e) => setEmail(e.target.value)} required />
-          </FloatingLabel>
+        <div className="auth-panel">
+          <div className="auth-panel-inner">
+            <div className="auth-header">
+              <h2>Sign In</h2>
+              <p>Enter your credentials to unlock your vault.</p>
+            </div>
 
-          <FloatingLabel label="Password" title="Password" className="mb-4">
-            <Form.Control type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} required />
-          </FloatingLabel>
+            <Form onSubmit={submit} className="auth-form">
+              <Form.Group className="mb-3">
+                <Form.Label>Institutional Email</Form.Label>
+                <Form.Control
+                  type="email"
+                  placeholder="name@university.edu"
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </Form.Group>
 
-          <Button variant="primary" type="submit" className="w-100 py-2 fw-bold shadow-sm">
-            Sign In
-          </Button>
-        </Form>
+              <div className="auth-row">
+                <Form.Label className="mb-2">Secure Password</Form.Label>
+                <button type="button" className="auth-inline-link">Forgot?</button>
+              </div>
+              <Form.Group className="mb-3">
+                <Form.Control
+                  type="password"
+                  placeholder="Password"
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </Form.Group>
 
-        <p className="mt-4 text-center small">
-          New user? <Link to="/register" className="text-decoration-none fw-bold">Create account</Link>
-        </p>
-      </Card>
-    </Container>
+              <Form.Check
+                type="checkbox"
+                className="auth-check"
+                label="Keep session active for 30 days"
+              />
+
+              <Button variant="dark" type="submit" className="w-100 auth-submit">
+                Unlock Vault
+              </Button>
+            </Form>
+
+            <p className="auth-footer">
+              New user? <Link to="/register">Create account</Link>
+            </p>
+          </div>
+        </div>
+      </Container>
+    </div>
   );
 }
 

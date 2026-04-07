@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Container, Form, Button, Card, Row, Col } from "react-bootstrap";
 import API from "../utils/api";
-import NavbarComp from "../components/NavbarComp";
 import { useNavigate } from "react-router-dom";
+import VaultLayout from "../components/VaultLayout";
 
 function AddBadge() {
   const [data, setData] = useState({});
@@ -25,58 +25,82 @@ function AddBadge() {
   };
 
   return (
-    <>
-      <NavbarComp />
-      <Container className="d-flex justify-content-center mt-5">
-        <Card className="p-4 shadow-sm border-0" style={{ maxWidth: "600px", width: "100%" }}>
-          <h3 className="fw-bold mb-4 text-center">Add New Skill Badge</h3>
-          <Form onSubmit={submit}>
-            <Row>
-              <Col md={12}>
-                <Form.Group className="mb-3">
-                  <Form.Label className="small fw-bold">Badge Title</Form.Label>
-                  <Form.Control placeholder="e.g. AWS Certified Solutions Architect"
-                    onChange={(e) => setData({ ...data, title: e.target.value })} required />
-                </Form.Group>
-              </Col>
-              <Col md={6}>
-                <Form.Group className="mb-3">
-                  <Form.Label className="small fw-bold">Skill Category</Form.Label>
-                  <Form.Control placeholder="e.g. Cloud Computing"
-                    onChange={(e) => setData({ ...data, skill: e.target.value })} required />
-                </Form.Group>
-              </Col>
-              <Col md={6}>
-                <Form.Group className="mb-3">
-                  <Form.Label className="small fw-bold">Organization</Form.Label>
-                  <Form.Control placeholder="e.g. Amazon"
-                    onChange={(e) => setData({ ...data, organization: e.target.value })} required />
-                </Form.Group>
-              </Col>
-              <Col md={6}>
-                <Form.Group className="mb-4">
-                  <Form.Label className="small fw-bold">Issue Date</Form.Label>
-                  <Form.Control type="date"
-                    onChange={(e) => setData({ ...data, date: e.target.value })} required />
-                </Form.Group>
-              </Col>
-              {/* NEW FILE INPUT */}
-              <Col md={6}>
-                <Form.Group className="mb-4">
-                  <Form.Label className="small fw-bold">Upload Certificate</Form.Label>
-                  <Form.Control type="file" accept="image/*"
-                    onChange={(e) => setImage(e.target.files[0])} />
-                </Form.Group>
-              </Col>
-            </Row>
-            <div className="d-grid gap-2">
-              <Button variant="primary" type="submit" size="lg">Save Badge</Button>
-              <Button variant="light" onClick={() => navigate("/dashboard")}>Cancel</Button>
-            </div>
-          </Form>
-        </Card>
+    <VaultLayout
+      activeKey="add"
+      title="Curate Your Legacy."
+      subtitle="Upload and verify your professional milestones. Your encrypted vault ensures your achievements are recognized globally."
+      breadcrumb="Vault > New Credential"
+    >
+      <Container fluid className="p-0">
+            <Card className="vault-form-card">
+              <Form onSubmit={submit}>
+                <div className="vault-upload-box">
+                  <div className="vault-upload-icon">+</div>
+                  <strong>Drag and drop certificate</strong>
+                  <span>High-resolution PDF, JPG, or PNG</span>
+                  <Form.Control
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setImage(e.target.files[0])}
+                  />
+                </div>
+
+                <Row className="g-3">
+                  <Col md={12}>
+                    <Form.Group>
+                      <Form.Label>Certificate Name</Form.Label>
+                      <Form.Control
+                        placeholder="e.g. Senior Architecture Specialist"
+                        onChange={(e) => setData({ ...data, title: e.target.value })}
+                        required
+                      />
+                    </Form.Group>
+                  </Col>
+                  <Col md={6}>
+                    <Form.Group>
+                      <Form.Label>Issuing Authority</Form.Label>
+                      <Form.Control
+                        placeholder="e.g. Stanford Online"
+                        onChange={(e) => setData({ ...data, organization: e.target.value })}
+                        required
+                      />
+                    </Form.Group>
+                  </Col>
+                  <Col md={6}>
+                    <Form.Group>
+                      <Form.Label>Credential Category</Form.Label>
+                      <Form.Control
+                        placeholder="e.g. Information Security"
+                        onChange={(e) => setData({ ...data, skill: e.target.value })}
+                        required
+                      />
+                    </Form.Group>
+                  </Col>
+                  <Col md={6}>
+                    <Form.Group>
+                      <Form.Label>Date Earned</Form.Label>
+                      <Form.Control
+                        type="date"
+                        onChange={(e) => setData({ ...data, date: e.target.value })}
+                        required
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+
+                <div className="vault-form-actions">
+                  <Button variant="dark" type="submit" className="vault-primary-button">
+                    Save Badge
+                  </Button>
+                  <Button variant="light" onClick={() => navigate("/dashboard")} className="vault-secondary-button">
+                    Cancel
+                  </Button>
+                </div>
+              </Form>
+            </Card>
+          
       </Container>
-    </>
+    </VaultLayout>
   );
 }
 

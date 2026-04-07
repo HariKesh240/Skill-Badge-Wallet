@@ -13,9 +13,11 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+const uploadsDir = path.join(__dirname, "uploads");
+
 // Ensure uploads folder exists
-if (!fs.existsSync("uploads")) {
-  fs.mkdirSync("uploads");
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir);
 }
 
 // Serve uploaded images statically
@@ -23,7 +25,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Multer Storage Configuration
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "uploads/"),
+  destination: (req, file, cb) => cb(null, uploadsDir),
   filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
 });
 const upload = multer({ storage });
