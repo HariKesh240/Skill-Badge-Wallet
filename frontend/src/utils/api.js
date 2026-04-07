@@ -30,8 +30,21 @@ export const getAssetUrl = (assetPath) => {
   if (assetPath.startsWith("http://") || assetPath.startsWith("https://")) {
     return assetPath;
   }
+  if (assetPath.startsWith("data:")) {
+    return assetPath;
+  }
 
   return `${API_BASE_URL}${assetPath}`;
+};
+
+export const isPdfAsset = (assetPath, fileType = "") => {
+  if (!assetPath && !fileType) return false;
+
+  return (
+    fileType === "application/pdf" ||
+    assetPath?.startsWith("data:application/pdf") ||
+    assetPath?.toLowerCase().endsWith(".pdf")
+  );
 };
 
 export default API;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Container, Card, Row, Col, Badge, Navbar } from "react-bootstrap";
-import API, { getAssetUrl } from "../utils/api";
+import API, { getAssetUrl, isPdfAsset } from "../utils/api";
 import { useParams } from "react-router-dom";
 
 function SharedWalletView() {
@@ -50,7 +50,7 @@ function SharedWalletView() {
               <Col md={6} xl={4} key={b._id}>
                 <Card className="badge-card h-100 border-0">
                   {b.imageUrl && (
-                    b.imageUrl.toLowerCase().endsWith(".pdf") ? (
+                    isPdfAsset(b.imageUrl, b.fileType) ? (
                       <iframe
                         title={b.title}
                         src={getAssetUrl(b.imageUrl)}

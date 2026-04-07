@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Container, Card, Button, Row, Col, Badge } from "react-bootstrap";
-import API, { getAssetUrl } from "../utils/api";
+import API, { getAssetUrl, isPdfAsset } from "../utils/api";
 import VaultLayout from "../components/VaultLayout";
 
 function Dashboard() {
@@ -59,7 +59,7 @@ function Dashboard() {
                 <Card className="vault-badge-card h-100">
                   <div className="vault-badge-card-top">
                     {b.imageUrl ? (
-                      b.imageUrl.toLowerCase().endsWith(".pdf") ? (
+                      isPdfAsset(b.imageUrl, b.fileType) ? (
                         <iframe
                           title={b.title}
                           src={getAssetUrl(b.imageUrl)}

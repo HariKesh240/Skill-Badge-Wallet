@@ -6,13 +6,14 @@ import VaultLayout from "../components/VaultLayout";
 
 function AddBadge() {
   const [data, setData] = useState({});
-  const [image, setImage] = useState(null); // New state for Image
+  const [image, setImage] = useState(null);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const submit = async (e) => {
     e.preventDefault();
-    
-    // We must use FormData when uploading files
+    setError("");
+
     const formData = new FormData();
     formData.append("title", data.title);
     formData.append("skill", data.skill);
@@ -20,8 +21,12 @@ function AddBadge() {
     formData.append("date", data.date);
     if (image) formData.append("image", image);
 
-    await API.post("/badge", formData);
-    navigate("/dashboard");
+    try {
+      await API.post("/badge", formData);
+      navigate("/dashboard");
+    } catch (err) {
+      setError(err.response?.data?.msg || "Upload failed. Please try again.");
+    }
   };
 
   return (
@@ -40,10 +45,11 @@ function AddBadge() {
                   <span>High-resolution PDF, JPG, or PNG</span>
                   <Form.Control
                     type="file"
-                    accept="image/*"
+                    accept="image/*,.pdf,application/pdf"
                     onChange={(e) => setImage(e.target.files[0])}
                   />
                 </div>
+                {error && <p className="text-danger mt-3 mb-0">{error}</p>}
 
                 <Row className="g-3">
                   <Col md={12}>
