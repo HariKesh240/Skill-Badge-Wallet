@@ -6,11 +6,19 @@ import { useNavigate, Link } from "react-router-dom";
 function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const submit = async () => {
-    await API.post("/register", { email, password });
-    navigate("/");
+  const submit = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    try {
+      await API.post("/register", { email, password });
+      navigate("/");
+    } catch (err) {
+      setError(err.response?.data?.msg || "Unable to create your account.");
+    }
   };
 
   return (
@@ -34,13 +42,14 @@ function Register() {
               <p>Set up your access credentials to initialize your vault.</p>
             </div>
 
-            <Form className="auth-form">
+            <Form onSubmit={submit} className="auth-form">
               <Form.Group className="mb-3">
                 <Form.Label>Institutional Email</Form.Label>
                 <Form.Control
                   type="email"
                   placeholder="name@university.edu"
                   onChange={(e) => setEmail(e.target.value)}
+                  required
                 />
               </Form.Group>
 
@@ -50,6 +59,7 @@ function Register() {
                   type="password"
                   placeholder="Password"
                   onChange={(e) => setPassword(e.target.value)}
+                  required
                 />
               </Form.Group>
 
@@ -59,7 +69,9 @@ function Register() {
                 label="I understand this wallet stores my professional credentials."
               />
 
-              <Button onClick={submit} className="w-100 auth-submit" variant="dark">
+              {error && <p className="text-danger mb-3">{error}</p>}
+
+              <Button type="submit" className="w-100 auth-submit" variant="dark">
                 Create Vault
               </Button>
             </Form>

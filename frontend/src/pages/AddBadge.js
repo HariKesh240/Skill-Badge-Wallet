@@ -42,13 +42,17 @@ function AddBadge() {
                 <div className="vault-upload-box">
                   <div className="vault-upload-icon">+</div>
                   <strong>Drag and drop certificate</strong>
-                  <span>High-resolution PDF, JPG, or PNG</span>
+                  <span>Upload a certificate image or PDF. Images use local OCR, and PDFs are checked locally.</span>
                   <Form.Control
                     type="file"
                     accept="image/*,.pdf,application/pdf"
                     onChange={(e) => setImage(e.target.files[0])}
+                    required
                   />
                 </div>
+                <p className="vault-upload-note">
+                  Only certificate-like uploads receive a verified badge.
+                </p>
                 {error && <p className="text-danger mt-3 mb-0">{error}</p>}
 
                 <Row className="g-3">
@@ -96,7 +100,7 @@ function AddBadge() {
 
                 <div className="vault-form-actions">
                   <Button variant="dark" type="submit" className="vault-primary-button">
-                    Save Badge
+                    Verify & Save
                   </Button>
                   <Button variant="light" onClick={() => navigate("/dashboard")} className="vault-secondary-button">
                     Cancel

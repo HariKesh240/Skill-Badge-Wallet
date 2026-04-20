@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Container, Card, Button, Row, Col, Badge } from "react-bootstrap";
-import API, { getAssetUrl, isPdfAsset } from "../utils/api";
+import API, { getAssetUrl, isPdfAsset, getVerificationMeta, getOriginalityMeta } from "../utils/api";
 import VaultLayout from "../components/VaultLayout";
 
 function Dashboard() {
@@ -54,49 +54,58 @@ function Dashboard() {
           </div>
         ) : (
           <Row className="g-4">
-            {badges.map((b) => (
-              <Col md={6} xl={4} key={b._id}>
-                <Card className="vault-badge-card h-100">
-                  <div className="vault-badge-card-top">
-                    {b.imageUrl ? (
-                      isPdfAsset(b.imageUrl, b.fileType) ? (
-                        <iframe
-                          title={b.title}
-                          src={getAssetUrl(b.imageUrl)}
-                          className="vault-badge-media"
-                        />
+            {badges.map((b) => {
+              const verificationMeta = getVerificationMeta(b.verificationStatus);
+
+              return (
+                <Col md={6} xl={4} key={b._id}>
+                  <Card className="vault-badge-card h-100">
+                    <div className="vault-badge-card-top">
+                      {b.imageUrl ? (
+                        isPdfAsset(b.imageUrl, b.fileType) ? (
+                          <iframe
+                            title={b.title}
+                            src={getAssetUrl(b.imageUrl)}
+                            className="vault-badge-media"
+                          />
+                        ) : (
+                          <Card.Img
+                            variant="top"
+                            src={getAssetUrl(b.imageUrl)}
+                            className="vault-badge-media"
+                          />
+                        )
                       ) : (
-                        <Card.Img
-                          variant="top"
-                          src={getAssetUrl(b.imageUrl)}
-                          className="vault-badge-media"
-                        />
-                      )
-                    ) : (
-                      <div className="vault-badge-media vault-badge-media-placeholder">{b.skill?.slice(0, 1) || "B"}</div>
-                    )}
-                    <Badge className="vault-verified-badge">Verified</Badge>
+                        <div className="vault-badge-media vault-badge-media-placeholder">{b.skill?.slice(0, 1) || "B"}</div>
+                      )}
+                    <Badge className={verificationMeta.className}>
+                      {verificationMeta.label}
+                    </Badge>
                   </div>
                   <Card.Body className="vault-badge-body">
                     <Card.Title>{b.title}</Card.Title>
                     <Card.Text className="vault-badge-skill">{b.skill}</Card.Text>
+                    <div className={getOriginalityMeta(b.originality).className}>
+                      {getOriginalityMeta(b.originality).label}
+                    </div>
                     <div className="vault-badge-meta">
                       <div>
                         <span>Issuing Authority</span>
-                        <strong>{b.organization}</strong>
+                          <strong>{b.organization}</strong>
+                        </div>
+                        <div>
+                          <span>Date Earned</span>
+                          <strong>{b.date}</strong>
+                        </div>
                       </div>
-                      <div>
-                        <span>Date Earned</span>
-                        <strong>{b.date}</strong>
-                      </div>
-                    </div>
-                    <Button variant="link" className="vault-remove-link" onClick={() => remove(b._id)}>
-                      Remove Badge
-                    </Button>
-                  </Card.Body>
-                </Card>
-              </Col>
-            ))}
+                      <Button variant="link" className="vault-remove-link" onClick={() => remove(b._id)}>
+                        Remove Badge
+                      </Button>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              );
+            })}
           </Row>
         )}
       </Container>

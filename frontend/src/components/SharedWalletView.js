@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Container, Card, Row, Col, Badge, Navbar } from "react-bootstrap";
-import API, { getAssetUrl, isPdfAsset } from "../utils/api";
+import API, { getAssetUrl, isPdfAsset, getVerificationMeta, getOriginalityMeta } from "../utils/api";
 import { useParams } from "react-router-dom";
 
 function SharedWalletView() {
@@ -46,42 +46,52 @@ function SharedWalletView() {
           </div>
         ) : (
           <Row className="g-4">
-            {badges.map((b) => (
-              <Col md={6} xl={4} key={b._id}>
-                <Card className="badge-card h-100 border-0">
-                  {b.imageUrl && (
-                    isPdfAsset(b.imageUrl, b.fileType) ? (
-                      <iframe
-                        title={b.title}
-                        src={getAssetUrl(b.imageUrl)}
-                        className="badge-card-image"
-                      />
-                    ) : (
-                      <Card.Img
-                        variant="top"
-                        src={getAssetUrl(b.imageUrl)}
-                        className="badge-card-image"
-                      />
-                    )
-                  )}
-                  <Card.Body className="d-flex flex-column p-4">
-                    <div className="d-flex justify-content-between align-items-start gap-3 mb-3">
-                      <Badge bg="info" className="text-dark badge-chip">
-                        {b.skill}
-                      </Badge>
-                      <span className="badge-date">{b.date}</span>
-                    </div>
-                    <Card.Title className="fw-bold text-dark mb-2">{b.title}</Card.Title>
-                    <Card.Subtitle className="mb-3 text-muted badge-org">
-                      Issued by {b.organization}
-                    </Card.Subtitle>
-                    <Card.Text className="text-secondary small badge-description">
-                      Shared badge details presented in the same wallet style without changing the concept.
-                    </Card.Text>
-                  </Card.Body>
-                </Card>
-              </Col>
-            ))}
+            {badges.map((b) => {
+              const verificationMeta = getVerificationMeta(b.verificationStatus);
+
+              return (
+                <Col md={6} xl={4} key={b._id}>
+                  <Card className="badge-card h-100 border-0">
+                    {b.imageUrl && (
+                      isPdfAsset(b.imageUrl, b.fileType) ? (
+                        <iframe
+                          title={b.title}
+                          src={getAssetUrl(b.imageUrl)}
+                          className="badge-card-image"
+                        />
+                      ) : (
+                        <Card.Img
+                          variant="top"
+                          src={getAssetUrl(b.imageUrl)}
+                          className="badge-card-image"
+                        />
+                      )
+                    )}
+                    <Card.Body className="d-flex flex-column p-4">
+                      <div className="d-flex justify-content-between align-items-start gap-3 mb-3">
+                        <Badge bg="info" className="text-dark badge-chip">
+                          {b.skill}
+                        </Badge>
+                        <Badge className={verificationMeta.className}>
+                          {verificationMeta.label}
+                        </Badge>
+                      </div>
+                      <span className="badge-date mb-3">{b.date}</span>
+                      <Card.Title className="fw-bold text-dark mb-2">{b.title}</Card.Title>
+                      <Card.Subtitle className="mb-3 text-muted badge-org">
+                        Issued by {b.organization}
+                      </Card.Subtitle>
+                      <div className={getOriginalityMeta(b.originality).className}>
+                        {getOriginalityMeta(b.originality).label}
+                      </div>
+                      <Card.Text className="text-secondary small badge-description">
+                        Shared badge details presented in the same wallet style without changing the concept.
+                      </Card.Text>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              );
+            })}
           </Row>
         )}
       </Container>

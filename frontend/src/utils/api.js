@@ -47,4 +47,24 @@ export const isPdfAsset = (assetPath, fileType = "") => {
   );
 };
 
+export const getVerificationMeta = (status = "verified") => {
+  if (status === "rejected") {
+    return { label: "Rejected", className: "vault-verification-badge is-rejected" };
+  }
+
+  return { label: "Verified", className: "vault-verification-badge" };
+};
+
+export const getOriginalityMeta = (originality = "unclear") => {
+  if (originality === "original") {
+    return { label: "Original", className: "vault-originality-note is-original" };
+  }
+
+  if (originality === "duplicate") {
+    return { label: "Duplicate", className: "vault-originality-note is-duplicate" };
+  }
+
+  return { label: "Originality unclear", className: "vault-originality-note" };
+};
+
 export default API;

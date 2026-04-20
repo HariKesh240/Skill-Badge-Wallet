@@ -453,6 +453,30 @@ button {
   letter-spacing: 0.08em;
 }
 
+.vault-verification-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: 0;
+  background: #ebfbf6;
+  color: #18a970;
+  text-transform: uppercase;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+}
+
+.vault-badge-card-top .vault-verification-badge {
+  position: absolute;
+  top: 22px;
+  right: 22px;
+}
+
+.vault-verification-badge.is-rejected {
+  background: #fff1f2;
+  color: #e11d48;
+}
+
 .vault-badge-body {
   padding: 26px 22px 22px;
 }
@@ -504,6 +528,21 @@ button {
   text-decoration: none;
 }
 
+.vault-originality-note {
+  margin-bottom: 18px;
+  color: var(--text-soft);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.vault-originality-note.is-original {
+  color: #15803d;
+}
+
+.vault-originality-note.is-duplicate {
+  color: #b42318;
+}
+
 .vault-form-card,
 .vault-preview-card {
   border: 1px solid var(--border-soft);
@@ -542,6 +581,12 @@ button {
 .vault-upload-box span {
   margin: 4px 0 18px;
   color: var(--text-soft);
+}
+
+.vault-upload-note {
+  margin: -8px 0 22px;
+  color: var(--text-soft);
+  font-size: 0.9rem;
 }
 
 .vault-form-card .form-label {
